@@ -1,0 +1,376 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>主页面</title>
+    <script src="../js/jquery-1.12.4.js"></script>
+    <script src="../js/echarts.min.js"></script>
+    <script src="../js/echarts-wordcloud.js"></script>
+    <link rel="stylesheet" href="../css/body.css">
+</head>
+<body>
+    <h1 style="text-align: center;">图书管理系统</h1>
+    <div>
+        <div id="navigate">
+            <ul>
+                <li id="home">主页</li>
+                <li id="book">查询</li>
+                <li id="manage">用户管理</li>
+                <li id="data">数据显示</li>
+                <li id="theme">主题</li>
+                <li id="exit">退出</li>
+            </ul>
+        </div>
+
+        <div id="show">
+            <!-- 开始部分 -->
+            <div id="start" style="width: 80%; height: 100%;"></div>
+
+            <script>
+                var data_json=[{name:'还不看书',value:1700},
+                        {name:'今天你看书了吗？',value:2000},
+                        {name:'快给我滚去看书',value:1700},
+                        {name:'读书好',value:1000},
+                        {name:'好读书',value:1000},
+                        {name:'读好书',value:1500},
+                        {name:'立身以立学为先',value:1500},
+                        {name:'除了看书你还能干嘛',value:1300},
+                        {name:'书籍使你进步',value:1200},
+                        {name:'天才不需要读书',value:500}]
+                var echar=echarts.init(document.getElementById('start'));
+                var option={
+                    rotationRange:[45,135],
+                    sizeRange:[20,30],
+                    series:[{
+                        type:'wordCloud',
+                        shape:'pentagon',
+                        textStyle:{
+                            normal:{
+                                color:function(){
+                                    return 'rgb('+[
+                                        Math.round(Math.random()*255),
+                                        Math.round(Math.random()*255),
+                                        Math.round(Math.random()*255),
+                                    ].join(',')+')';
+                                },
+                            },
+                        },
+                        data:data_json
+                    }]
+                }
+                echar.setOption(option);
+            </script>
+
+            <!-- 主页部分 -->
+            <div id="table" class="hide" style="overflow-y: scroll;">
+                <!-- <table border="20rem" cellspacing="20rem" cellpadding="10rem" width="100%">
+                    <tr>
+                        <th>编号</th>
+                        <th>书名</th>
+                        <th>库存</th>
+                        <th>类别</th>
+                        <th>借出</th>
+                        <th>归还</th>
+                        <th>详情</th>
+                    </tr>
+                </table> -->
+            </div>
+            <!-- 查询部分 -->
+            <div id="select" class="hide">
+                <input type="text" name="selId" placeholder="请输入查询的书籍名称" style="width: 20rem;">
+                <input type="button" value="查询" onclick="sub()" style="width: 5rem" />
+                <div id="seldata" class="none"></div>
+            </div>
+            <!-- 用户管理部分 -->
+            <div id="userMag" style="display: none;">
+                <form action="./user" method="POST">
+                    <div>
+                        <span class="label">用户名：</span>
+                         <input type="text" name="username" class="text" placeholder="请输入用户名">
+                    </div>
+                   <div>
+                       <span class="label">新密码：</span>
+                       <input type="password" name="password1" class="text" placeholder="请输入密码">
+                   </div>
+                    <div>
+                        <span class="label">再输入：</span>
+                        <input type="password" name="password2" class="text"placeholder="请输确认密码" onkeyup="validate()"> 
+                        <span id="pwderror" style="display: none">两次密码不同</span>
+                    </div>
+                    <div>
+                    <input type="submit" id="submit" class="btn" value="确定"dis>
+                    <input type="reset" class="btn" value="重置">
+                    </div>
+                </form>
+            </div>
+            <!-- 验证密码是否一致 -->
+            <script>
+            function validate() {
+              var pwd1 = $('input[name=password1]').val();
+              var pwd2 = $('input[name=password2').val();
+              console.log(pwd1)
+              if(pwd1 == pwd2) {
+                $('#pwderror').hide()
+                  document.getElementById('submit').disabled=false
+              }
+              else {
+                $('#pwderror').show()
+                document.getElementById('submit').disabled=true
+              }
+          }
+            </script>
+            <!-- 数据显示部分 -->
+            
+            <div id="echarts" style="width: 50%; height: 100%; display: block;" ></div>
+            <!-- 主题部分 -->
+        </div>
+    </div>
+    </div>
+    <script>
+        // 修改数据内容的部分
+        function updatedata(id, method) {
+            console.log(id, method)
+            $.ajax({
+                url: './updateData',
+                type: 'POST',
+                data: { Id: id, Method: method },
+                success: function () {
+                    alert('恭喜您操作成功');
+                    // {
+                    //     $.ajax({
+                    //         url: './home',
+                    //         type: 'GET',
+                    //         cache: true,
+                    //         dataType: 'json',
+                    //         contentType: 'application/json;charset=UTF-8',
+                    //         success: function (result) {
+                    //             fun(result)
+                    //         },
+                    //         error: function () {
+                    //             console.log('fail')
+                    //         }
+                    //     })
+                    // }
+                    data_ajax()
+                    console.log('success');
+                },
+                error: function () {
+                    console.log('faill');
+                }
+            })
+        }
+        // 点击查询书籍部分的提交方法
+        function sub() {
+            var tep = $('input[name=selId]').val()
+            console.log(tep)
+            if (tep != null) {
+                $.ajax({
+                    url: './selBook',
+                    data: { name: tep },
+                    type: 'POST',
+                    dataType: 'json',
+                    cache: false,
+                    async: false,
+                    success: function (res) {
+                        console.log(res)
+                        var seldate = `<table id='table2' border="20rem" cellspacing="20rem" cellpadding="10rem" width="100%">
+                    <tr>
+                        <th>编号</th>
+                        <th>书名</th>
+                        <th>库存</th>
+                        <th>类别</th>
+                        <th>借出</th>
+                        <th>归还</th>
+                        <th>详情</th>
+                    </tr>
+                    <tr>
+                        <td>${res.id}</td>
+                        <td>${res.name}</td>
+                        <td>${res.count}</td>
+                        <td>${res.type}</td>
+                        <td class='btn' onclick="updatedata(${res.id},'bor')">借出</td>
+                        <td class='btn' onclick="updatedata(${res.id},'ret')">归还</td>
+                        <td>详情</td>
+                        </tr>
+                </table>`
+                        $('#seldata').html(seldate)
+                        console.log('success')
+                    },
+                    error: function () {
+                        console.log('fail')
+                    }
+                })
+            }
+        }
+
+        // 数据的出示
+        function fun(datas) {
+            console.log(datas)
+            const tableHead = `<table id='table1'  border="20rem" cellspacing="20rem" cellpadding="10rem" width="100%">
+                    <tr>
+                        <th>编号</th>
+                        <th>书名</th>
+                        <th>库存</th>
+                        <th>类别</th>
+                        <th>借出</th>
+                        <th>归还</th>
+                        <th>详情</th>
+                    </tr>
+                </table>
+            `
+            $('#table').html(tableHead)
+            for (let i = 0; i < datas.length; i++) {
+                var table = `<tr>
+                                <td>${datas[i].id}</td>
+                                <td>${datas[i].name}</td>
+                                <td>${datas[i].count}</td>
+                                <td>${datas[i].type}</td>
+                                <td class='btn' onclick="updatedata(${datas[i].id},'bor')">借出</td>
+                                <td class='btn' onclick="updatedata(${datas[i].id},'ret')">归还</td>
+                                <td>详情</td>
+                            </tr>`
+                $('#table1').append(table)
+            }
+        }
+        //搜索数据的ajax请求的方法封装
+        function data_ajax() {
+            $.ajax({
+                url: './home',
+                type: 'GET',
+                cache: false,
+                dataType: 'json',
+                contentType: 'application/json;charset=UTF-8',
+                success: function (result) {
+                    fun(result)
+                },
+                error: function () {
+                    console.log('fail')
+                }
+            })
+        }
+
+
+        /*操作栏部分*/
+        // 主页操作
+        $('#home').on('click', function () {
+            $('#start').hide();
+            $('#table').show();
+            $('#select').hide()
+            $('#echarts').hide()
+            // $('.none').hide();
+            data_ajax();
+        });
+        // $("#home").on('click', function () {
+        //     $.ajax({
+        //         url: './home',
+        //         type: 'GET',
+        //         cache: true,
+        //         dataType: 'json',
+        //         contentType: 'application/json;charset=UTF-8',
+        //         success: function (result) {
+        //             fun(result)
+        //         },
+        //         error: function () {
+        //             console.log('fail')
+        //         }
+        //     })
+        // })
+        // 查询
+        $('#book').on('click', function () {
+            $('#table').hide()
+            $('#select').show()
+            $('#start').hide()
+            $('#echarts').hide()
+            $('#userMag').hide()
+        })
+    // 用户管理
+    $('#manage').on('click',function(){
+        $('#start').hide();
+        $('#table').hide();
+        $('#select').hide()
+        $('#echarts').hide()
+        $('#userMag').show()
+
+    })
+    // 数据显示
+    var echart=echarts.init(document.getElementById('echarts'));
+    $('#data').on('click',function(){
+        $('#start').hide();
+        $('#table').hide();
+        $('#select').hide()
+        $('#echarts').show()
+        $('#userMag').hide()
+        $.ajax({
+                url: './home',
+                type: 'GET',
+                cache: false,
+                dataType: 'json',
+                contentType: 'application/json;charset=UTF-8',
+                success: function (result) {
+                  showData(echart,result)
+                },
+                error: function () {
+                    console.log('fail')
+                }
+            })
+    })
+    function showData(chart,result){
+        var Bname=[]
+        var Bcount=[]
+        for(let i=0;i<result.length;i++){
+            Bname.push(result[i].name);
+            Bcount.push(result[i].count);
+        }
+        var option={
+            title:{
+                text:'图书量化图',
+            },
+            xAxis:{
+                type:'category',
+                data: Bname,
+                axisLabel:{
+                rotate:30,
+                interval:0,
+                },
+                
+            },
+            yAxis:{type:'value'},
+            series:[{
+                type:'bar',
+                data:Bcount,
+                itemStyle:{
+                    normal:{
+                        label:{show:true},
+                        position:'top',
+                        textStyle:{color:'#00FFFF'}
+                    }
+                }
+            }]
+        };
+       chart.setOption(option); 
+    window.resize=chart.resize
+    }
+    // 主题
+    let index=0;
+    $('#theme').on('click',function(){
+        var themeArr=["http://pic1.win4000.com/wallpaper/1/5969de1715571.jpg",
+                    "http://pic.ntimg.cn/file/20180502/21989880_200232442000_2.jpg",
+                    "https://img1.baidu.com/it/u=4235612956,667875563&fm=26&fmt=auto",
+                    "https://img0.baidu.com/it/u=3846096436,117333706&fm=26&fmt=auto",
+                    "https://img2.baidu.com/it/u=2575669494,634058234&fm=26&fmt=auto",
+                    "https://img0.baidu.com/it/u=1975717937,3219357347&fm=26&fmt=auto",
+                    "https://img2.baidu.com/it/u=3763138308,1948806580&fm=26&fmt=auto"]
+        if(index==themeArr.length){
+            index=0;
+        }
+        console.log(index)
+        $('#show').css({"background":`url(${themeArr[index]})`})
+        index++;
+    })
+    // 退出
+    $('#exit').on('click',function(){
+        window.location.href="./exit";
+    })
+    </script>
+</body>
+</html>

@@ -1,0 +1,72 @@
+div{
+    width: 100%;
+    height: 80%;
+}
+#navigate{
+    width: 12%;
+    float: left;
+    height: 100%;
+}
+ul{
+    border: 0;
+    margin: 0;
+    padding: 0;
+}
+ul li{
+    padding-top: 2rem;
+    background: blueviolet;
+    list-style: none;
+    height: 3rem;
+    text-align: center;
+    font-size: 1rem;
+    cursor: pointer;
+    text-decoration: underline;
+}
+#show{
+    height: 30rem;
+    width: 88%;
+    float: right;
+    /* background-color: lemonchiffon; */
+    
+    background: url(https://img2.baidu.com/it/u=3763138308,1948806580&fm=26&fmt=auto);
+}
+#show table{
+    border: black 2rem;
+    overflow: scroll;
+}
+tr td{
+    font-size: 1rem;
+    /* align-content: center; */
+    text-align: center;
+}
+.btn{
+    cursor: pointer;
+
+}
+.hide{
+    display: none;
+}
+#select{
+    text-align: center;
+}
+input{
+    margin-top: 2rem;
+    text-align: center;
+    height: 2rem;
+}
+#userMag form{
+    text-align: center;
+    align-content: center;
+}
+.label{
+    font-size: 2rem;
+}
+.text{
+    width: 20rem;
+    height: 3rem;
+}
+#userMag .btn{
+    width: 6rem;
+    height: 3rem;
+    margin: 4rem;
+}

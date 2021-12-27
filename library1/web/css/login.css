@@ -1,0 +1,31 @@
+body{
+    background: url('http://pic43.photophoto.cn/20170611/0008118297500302_b.jpg');
+    background-size: cover;
+}
+#main{
+    border-radius: 16%;
+    background:url("http://picnew3.photophoto.cn/20081222/lansemenghuanbeijingtupian-13656275_1.jpg");
+    width: 40em;
+    height: 20em;
+    margin-top:20%;
+    text-align: center;
+    margin-left: 30%;
+}
+span {
+    font-size: 1.5em;
+}
+form {
+    width: 36em;
+    height: 16em;
+
+}
+form .message{
+    width: 16rem;
+    height: 3rem;
+    margin: 1rem;
+}
+form .btn{
+    width: 7rem;
+    height: 2rem;
+    margin: 2rem;
+}
